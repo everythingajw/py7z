@@ -9,7 +9,7 @@ This tool was developed and tested on Debian.
 
 ## Installing
 
-Prerequisites are Python 3.11 or later and 7-Zip.
+Prerequisites are Python and 7-Zip. The first version of this project was built with Python 3.12 and used 7-Zip 24.08.
 
 Just put [py7z](py7z.py) somewhere on PATH. That's all.
 
