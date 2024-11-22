@@ -138,11 +138,11 @@ def parse_args(args = None):
                                  help="List files in archive")
     parser.add_argument("-t", "--archive-format", choices=ARCHIVE_FORMATS, required=False, dest="archive_format",
                         help="Set archive format")
-    parser.add_argument("-m", "--compression-method", choices=COMPRESSION_METHODS, required=False,
+    parser.add_argument("-m", "--mm", "--compression-method", choices=COMPRESSION_METHODS, required=False,
                         dest="compression_method", help="Set compression method")
-    parser.add_argument("-c", "--compression-level", choices=COMPRESSION_LEVELS, required=False,
+    parser.add_argument("-c", "--mx", "--compression-level", choices=COMPRESSION_LEVELS, required=False,
                         dest="compression_level", help="Set compression level")
-    parser.add_argument("--num-threads", type=argument_types.thread_count, required=False, metavar="N",
+    parser.add_argument("--num-threads", "--mmt", type=argument_types.thread_count, required=False, metavar="N",
                         dest="num_threads", help="Set number of threads")
     parser.add_argument("--store-timestamps", choices=TIMESTAMPS, type=argument_types.timestamps, required=False,
                         dest="store_timestamps", help="Comma-separated list of timestamps to be stored")
