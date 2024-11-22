@@ -3,7 +3,6 @@
 import argparse
 import pathlib
 import sys
-import argument_types
 from typing import List
 import os
 import re
@@ -27,6 +26,47 @@ OVERWRITE_MODE_LOOKUP = {
     "rename-extracted": "u",
     "rename-existing": "t"
 }
+
+
+def _generic_size(s, what):
+    if re.fullmatch(r"[0-9]+[bkmgt]", s, re.IGNORECASE) is not None:
+        return s
+    raise ValueError(f"Invalid {what} {s}")
+
+
+def thread_count(s):
+    s = s.lower()
+    if s in ("off", "on"):
+        return s
+    i = int(s)
+    if i < 0:
+        raise ValueError("Number of threads must not be negative")
+    return s
+
+
+def timestamps(s):
+    ts = set(s.lower().split(","))
+    for t in ts:
+        if t not in TIMESTAMPS:
+            raise ValueError(f"Invalid timestamp {t}")
+    return tuple(ts)
+
+
+def solid_block_size(s):
+    s = s.lower()
+    if s == "none":
+        return "off"
+    if s == "solid":
+        return "on"
+    return _generic_size(s, "solid block size")
+
+
+def dictionary_size(s):
+    return _generic_size(s, "dictionary size")
+
+
+def verbosity_level(c):
+    return min(c, 3)
 
 
 def get_7z_path():
@@ -127,7 +167,7 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
     return real_args
 
 
-def parse_args(args = None):
+def parse_args(args=None):
     parser = argparse.ArgumentParser(argument_default=None, allow_abbrev=False,
                                      description="A very bare-bones, minimal wrapper around the 7-Zip CLI.")
     operation_group = parser.add_mutually_exclusive_group(required=True)
@@ -142,15 +182,15 @@ def parse_args(args = None):
                         dest="compression_method", help="Set compression method")
     parser.add_argument("-c", "--mx", "--compression-level", choices=COMPRESSION_LEVELS, required=False,
                         dest="compression_level", help="Set compression level")
-    parser.add_argument("--num-threads", "--mmt", type=argument_types.thread_count, required=False, metavar="N",
+    parser.add_argument("--num-threads", "--mmt", type=thread_count, required=False, metavar="N",
                         dest="num_threads", help="Set number of threads")
-    parser.add_argument("--store-timestamps", choices=TIMESTAMPS, type=argument_types.timestamps, required=False,
+    parser.add_argument("--store-timestamps", choices=TIMESTAMPS, type=timestamps, required=False,
                         dest="store_timestamps", help="Comma-separated list of timestamps to be stored")
     parser.add_argument("--compress-header", action=argparse.BooleanOptionalAction, required=False,
                         type=bool, dest="compress_header", help="Enable or disable header compression")
     parser.add_argument("--encrypt-header", action=argparse.BooleanOptionalAction, required=False,
                         type=bool, dest="encrypt_header", help="Enable or disable header encryption")
-    parser.add_argument("--solid-block-size", type=argument_types.solid_block_size, required=False,
+    parser.add_argument("--solid-block-size", type=solid_block_size, required=False,
                         dest="solid_block_size", metavar="SIZE",
                         help="Set solid block size (none, solid, {N}{b,k,m,g,t})")
     parser.add_argument("--delete-after-compression", action=argparse.BooleanOptionalAction, required=False,
@@ -176,7 +216,8 @@ def parse_args(args = None):
                         help="Recursively include files from pattern or wildcard (equivalent to -ir@/-ir!)")
     parser.add_argument("-x", "--exclude", action="append", required=False, metavar="PAT", dest="exclude",
                         help="Exclude files from pattern or wildcard (equivalent to -x@/x!)")
-    parser.add_argument("-X", "--exclude-recursive", action="append", required=False, metavar="PAT", dest="exclude_recursive",
+    parser.add_argument("-X", "--exclude-recursive", action="append", required=False, metavar="PAT",
+                        dest="exclude_recursive",
                         help="Exclude files from pattern or wildcard (equivalent to -xr@/ir!)")
     parser.add_argument("--an", "--ignore-archive-name", action="store_true", required=False,
                         dest="ignore_archive_name", help="Disable archive name parsing (equivalent to -an)")
