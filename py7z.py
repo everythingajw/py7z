@@ -17,7 +17,11 @@ OPERATIONS = ("add", "extract")
 ARCHIVE_FORMATS = ("7z", "xz", "bzip2", "gzip", "tar", "zip", "wim")
 COMPRESSION_LEVELS = ("0", "1", "3", "5", "7", "9")
 COMPRESSION_METHODS = ("copy", "deflate", "deflate64", "bzip2", "lzma", "lzma2", "ppmd")
-TIMESTAMPS = ("access", "creation", "modified")
+TIMESTAMPS_LOOKUP = {
+    "access": "a",
+    "creation": "c",
+    "modified": "m",
+}
 CONSOLE_CHARSETS = ("utf-8", "win", "dos")
 LISTFILE_CHARSETS = ("utf-8", "utf-16le", "utf-16be", "win", "dos")
 OVERWRITE_MODE_LOOKUP = {
@@ -118,13 +122,7 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
         real_args.append(f"-mmt={args.num_threads}")
     if args.store_timestamps is not None:
         for t in args.store_timestamps:
-            # TODO: magic constants
-            if t == "access":
-                real_args.append("-mta=on")
-            elif t == "creation":
-                real_args.append("-mtc=on")
-            elif t == "modified":
-                real_args.append("-mtm=on")
+            real_args.append(f"-mt{TIMESTAMPS_LOOKUP[t]}=on")
     if args.compress_header is not None:
         real_args.append(f"-mhc={_on_off(args.compress_header)}")
     if args.encrypt_header is not None:
@@ -184,7 +182,7 @@ def parse_args(args=None):
                         dest="compression_level", help="Set compression level")
     parser.add_argument("--num-threads", "--mmt", type=thread_count, required=False, metavar="N",
                         dest="num_threads", help="Set number of threads")
-    parser.add_argument("--store-timestamps", choices=TIMESTAMPS, type=timestamps, required=False,
+    parser.add_argument("--store-timestamps", choices=TIMESTAMPS_LOOKUP.keys(), type=timestamps, required=False,
                         dest="store_timestamps", help="Comma-separated list of timestamps to be stored")
     parser.add_argument("--compress-header", action=argparse.BooleanOptionalAction, required=False,
                         type=bool, dest="compress_header", help="Enable or disable header compression")
