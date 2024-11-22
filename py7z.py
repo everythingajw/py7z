@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import pathlib
 import sys
@@ -91,6 +93,8 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
         real_args.append(f"-ms={args.solid_block_size}")
     if args.delete_after_compression is not None and args.delete_after_compression:
         real_args.append("-sdel")
+    if args.read_from_stdin is not None and args.read_from_stdin:
+        real_args.append("-si")
     if args.extract_to_stdout is not None and args.extract_to_stdout:
         real_args.append("-so")
     if args.verbose is not None:
@@ -152,6 +156,8 @@ def parse_args(args = None):
     parser.add_argument("--delete-after-compression", action=argparse.BooleanOptionalAction, required=False,
                         type=bool, dest="delete_after_compression",
                         help="Enable or disable deleting files after compression")
+    parser.add_argument("--stdin", action="store_true", required=False, default=None, dest="read_from_stdin",
+                        help="Read files from stdin")
     parser.add_argument("--stdout", action="store_true", required=False, default=None, dest="extract_to_stdout",
                         help="Extract files to stdout")
     parser.add_argument("--progress", action=argparse.BooleanOptionalAction, required=False,
