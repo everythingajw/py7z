@@ -51,7 +51,7 @@ def thread_count(s):
 def timestamps(s):
     ts = set(s.lower().split(","))
     for t in ts:
-        if t not in TIMESTAMPS:
+        if t not in TIMESTAMPS_LOOKUP:
             raise ValueError(f"Invalid timestamp {t}")
     return tuple(ts)
 
