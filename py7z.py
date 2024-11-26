@@ -112,6 +112,10 @@ def _make_inclusion_arg(pattern, recurse, include_flag):
 
 def build_7z_command(args: argparse.Namespace) -> List[str]:
     real_args: List[str] = [get_operation(args)]
+    # NOTE: The == True and == False here is intentional!
+    # Be extremely specific to 100% guarantee behavior. Do not coerce!
+    # With == True and == False we are sure that both an option was specified *and* it has the value we want.
+    # This also cleans up the pattern of "SPAM is not None and SPAM" or "SPAM is not None and not SPAM"
     if args.archive_format is not None:
         real_args.append(f"-t{args.archive_format}")
     if args.compression_method is not None:
@@ -129,15 +133,15 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
         real_args.append(f"-mhe={_on_off(args.encrypt_header)}")
     if args.solid_block_size is not None:
         real_args.append(f"-ms={args.solid_block_size}")
-    if args.delete_after_compression is not None and args.delete_after_compression:
+    if args.delete_after_compression == True:
         real_args.append("-sdel")
-    if args.read_from_stdin is not None and args.read_from_stdin:
+    if args.read_from_stdin == True:
         real_args.append("-si")
-    if args.extract_to_stdout is not None and args.extract_to_stdout:
+    if args.extract_to_stdout == True:
         real_args.append("-so")
     if args.verbose is not None:
         real_args.append(f"-bb{args.verbose}")
-    if args.store_symlinks_as_links is not None and args.store_symlinks_as_links:
+    if args.store_symlinks_as_links == True:
         real_args.append("-snl")
     if args.output_directory is not None:
         real_args.append(f"-o{args.output_directory}")
@@ -151,17 +155,17 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
         real_args.extend(_make_inclusion_arg(p, "", "x") for p in args.exclude)
     if args.exclude_recursive is not None:
         real_args.extend(_make_inclusion_arg(p, "r", "x") for p in args.exclude_recursive)
-    if args.ignore_archive_name is not None and args.ignore_archive_name:
+    if args.ignore_archive_name == True:
         real_args.append("-an")
-    if args.enable_wildcards is not None and not args.enable_wildcards:
+    if args.enable_wildcards == False:
         real_args.append("-spd")
-    if args.fail_on_bad_file is not None and args.fail_on_bad_file:
+    if args.fail_on_bad_file == True:
         real_args.append("-sse")
     if args.overwrite_mode is not None:
         real_args.append(f"-ao{OVERWRITE_MODE_LOOKUP[args.overwrite_mode]}")
-    if args.show_progress is not None and not args.show_progress:
+    if args.show_progress == False:
         real_args.append("-bd")
-    if args.assume_yes is not None and args.assume_yes:
+    if args.assume_yes == True:
         real_args.append("-y")
     real_args.append(args.archive)
     if args.files is not None:
