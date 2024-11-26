@@ -159,6 +159,10 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
         real_args.append("-sse")
     if args.overwrite_mode is not None:
         real_args.append(f"-ao{OVERWRITE_MODE_LOOKUP[args.overwrite_mode]}")
+    if args.show_progress is not None and not args.show_progress:
+        real_args.append("-bd")
+    if args.assume_yes is not None and args.assume_yes:
+        real_args.append("-y")
     real_args.append(args.archive)
     if args.files is not None:
         real_args.extend(args.files)
@@ -230,6 +234,10 @@ def parse_args(args=None):
     parser.add_argument("--overwrite", choices=(OVERWRITE_MODE_LOOKUP.keys()),
                         required=False, default=None, dest="overwrite_mode",
                         help="Specify how files should be overwritten (equivalent to -ao)")
+    parser.add_argument("--progress", action=argparse.BooleanOptionalAction, required=False, dest="show_progress",
+                        help="Enable or disable progress indicator")
+    parser.add_argument("-y", "--yes", action="store_true", required=False, default=None, dest="assume_yes",
+                        help="Assume yes on all operations (equivalent to -y)")
     parser.add_argument("archive", type=str, help="Archive to operate on")
     parser.add_argument("files", type=str, nargs="*", help="Files to operate on")
     # parser.print_help(sys.stdout)
