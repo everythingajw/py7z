@@ -116,6 +116,9 @@ def build_7z_command(args: argparse.Namespace) -> List[str]:
     # Be extremely specific to 100% guarantee behavior. Do not coerce!
     # With == True and == False we are sure that both an option was specified *and* it has the value we want.
     # This also cleans up the pattern of "SPAM is not None and SPAM" or "SPAM is not None and not SPAM"
+    # If we use just "not SPAM", then if SPAM is None (that is, it's not specified), it is passed to 7z anyway.
+    # We do NOT want this behavior since the goal of this program is simple argument translation. Do NOT "create"
+    # arguments that were not given.
     if args.archive_format is not None:
         real_args.append(f"-t{args.archive_format}")
     if args.compression_method is not None:
