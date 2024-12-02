@@ -238,8 +238,6 @@ def parse_args(args=None):
     parser.add_argument("--overwrite", choices=(OVERWRITE_MODE_LOOKUP.keys()),
                         required=False, default=None, dest="overwrite_mode",
                         help="Specify how files should be overwritten (equivalent to -ao)")
-    parser.add_argument("--progress", action=argparse.BooleanOptionalAction, required=False, dest="show_progress",
-                        help="Enable or disable progress indicator")
     parser.add_argument("-y", "--yes", action="store_true", required=False, default=None, dest="assume_yes",
                         help="Assume yes on all operations (equivalent to -y)")
     parser.add_argument("archive", type=str, help="Archive to operate on")
