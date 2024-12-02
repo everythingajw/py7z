@@ -189,7 +189,8 @@ def parse_args(args=None):
     parser.add_argument("-c", "--mx", "--compression-level", choices=COMPRESSION_LEVELS, required=False,
                         dest="compression_level", help="Set compression level")
     parser.add_argument("--num-threads", "--mmt", type=thread_count, required=False, metavar="N",
-                        dest="num_threads", help="Set number of threads")
+                        dest="num_threads",
+                        help="Set number of threads ('on' to automatically determine number of threads, 'off' to disable)")
     parser.add_argument("--store-timestamps", choices=TIMESTAMPS_LOOKUP.keys(), type=timestamps, required=False,
                         dest="store_timestamps", help="Comma-separated list of timestamps to be stored")
     parser.add_argument("--compress-header", action=argparse.BooleanOptionalAction, required=False,
