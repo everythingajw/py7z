@@ -4,6 +4,9 @@ import argparse
 import pathlib
 import sys
 from typing import List
+from typing import Literal
+from typing import Optional
+from typing import Tuple
 import os
 import re
 
@@ -32,13 +35,13 @@ OVERWRITE_MODE_LOOKUP = {
 }
 
 
-def _generic_size(s, what):
+def _generic_size(s: str, what: str = "size") -> str:
     if re.fullmatch(r"[0-9]+[bkmgt]", s, re.IGNORECASE) is not None:
         return s
     raise ValueError(f"Invalid {what} {s}")
 
 
-def thread_count(s):
+def thread_count(s: str) -> str:
     s = s.lower()
     if s in ("off", "on"):
         return s
@@ -48,7 +51,7 @@ def thread_count(s):
     return s
 
 
-def timestamps(s):
+def timestamps(s: str) -> Tuple[str, ...]:
     ts = set(s.lower().split(","))
     for t in ts:
         if t not in TIMESTAMPS_LOOKUP:
@@ -69,15 +72,15 @@ def dictionary_size(s):
     return _generic_size(s, "dictionary size")
 
 
-def verbosity_level(c):
+def verbosity_level(c: int) -> int:
     return min(c, 3)
 
 
-def get_7z_path():
+def get_7z_path() -> Optional[str]:
     return os.environ.get("PY7Z_7Z_PATH", None)
 
 
-def exec_7z(args):
+def exec_7z(args: List[str]):
     exec_func = os.execv
     exe_path = get_7z_path()
     if exe_path is None:
@@ -86,7 +89,7 @@ def exec_7z(args):
     exec_func(exe_path, [exe_path, *args])
 
 
-def _on_off(b):
+def _on_off(b: bool) -> str:
     return "on" if b else "off"
 
 
@@ -100,13 +103,13 @@ def get_operation(args: argparse.Namespace) -> str:
     raise ValueError("Unhandled operation")
 
 
-def _make_inclusion_pattern(pattern):
+def _make_inclusion_pattern(pattern: str) -> str:
     return f"!{pattern}" if pattern[0] != "@" else pattern
 
 
-def _make_inclusion_arg(pattern, recurse, include_flag):
+def _make_inclusion_arg(pattern: str, recurse: str, include_flag: Literal["i", "x"]) -> str:
     assert include_flag in ("i", "x"), f"include flag must be i or x"
-    assert re.fullmatch(r"(r[0-])?", recurse, ) is not None, "recursion option does not match regex"
+    assert re.fullmatch(r"(r[0-])?", recurse) is not None, "recursion option does not match regex"
     return f"-{include_flag}{recurse}{_make_inclusion_pattern(pattern)}"
 
 
