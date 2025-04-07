@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+General wrapper for the 7-Zip command line interface.
+"""
 
 import argparse
 import pathlib
