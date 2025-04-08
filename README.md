@@ -19,6 +19,7 @@ Just put the tools somewhere on PATH. That's all.
 
 - [py7z](py7z.py): the "barebones translation" tool that does little more than translate parameters to 7-Zip's obtuse syntax
 - [py7z-ls](py7z_ls.py): list files in an archive
+- [py7z-hash](py7z_hash.py): hash files and archive contents
 
 ## Usage
 
