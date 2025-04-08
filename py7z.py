@@ -4,14 +4,12 @@ General wrapper for the 7-Zip command line interface.
 """
 
 import argparse
-import pathlib
-import sys
 from typing import List
 from typing import Literal
-from typing import Optional
 from typing import Tuple
-import os
 import re
+
+from common import exec_7z
 
 # <https://7-zip.opensource.jp/chm/cmdline/>
 #
@@ -77,19 +75,6 @@ def dictionary_size(s):
 
 def verbosity_level(c: int) -> int:
     return min(c, 3)
-
-
-def get_7z_path() -> Optional[str]:
-    return os.environ.get("PY7Z_7Z_PATH", None)
-
-
-def exec_7z(args: List[str]):
-    exec_func = os.execv
-    exe_path = get_7z_path()
-    if exe_path is None:
-        exe_path = "7z"
-        exec_func = os.execvp
-    exec_func(exe_path, [exe_path, *args])
 
 
 def _on_off(b: bool) -> str:
