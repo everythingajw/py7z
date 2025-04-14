@@ -18,6 +18,7 @@ Just put the tools somewhere on PATH. That's all.
 ## What's included
 
 - [py7z](py7z.py): the "barebones translation" tool that does little more than translate parameters to 7-Zip's obtuse syntax
+- [py7z2](py7z2.py): a "unified command" with subcommands (not unlike git(1)) and a little more argument parsing logic
 - [py7z-ls](py7z_ls.py): list files in an archive
 - [py7z-hash](py7z_hash.py): hash files and archive contents
 
